@@ -11,6 +11,12 @@ namespace ECommerce_MW.DAL
         }
 
         public DbSet<Country> Countries { get; set; }                               //Variable del database en plural
-        
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)          //Sirve para hacer indexaciones
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Country>().HasIndex(c => c.Name).IsUnique();
+
+        }
     }
 }
