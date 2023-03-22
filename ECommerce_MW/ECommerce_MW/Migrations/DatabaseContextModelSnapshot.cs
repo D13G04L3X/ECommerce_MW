@@ -22,6 +22,62 @@ namespace ECommerce_MW.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("ECommerce_MW.DAL.Entities.Category", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("ECommerce_MW.DAL.Entities.City", b =>
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("uniqueidentifier");
+
+                b.Property<DateTime?>("CreatedDate")
+                    .HasColumnType("datetime2");
+
+                b.Property<DateTime?>("ModifiedDate")
+                    .HasColumnType("datetime2");
+
+                b.Property<string>("Name")
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnType("nvarchar(50)");
+
+                b.Property<Guid?>("StateId")
+                    .HasColumnType("uniqueidentifier");
+
+                b.HasKey("Id");
+
+                b.HasIndex("StateId");
+
+                b.HasIndex("Name", "StateId")
+                    .IsUnique()
+                    .HasFilter("[StateId] IS NOT NULL");
+
+                b.ToTable("Cities");
+            });
+
             modelBuilder.Entity("ECommerce_MW.DAL.Entities.Country", b =>
                 {
                     b.Property<Guid>("Id")
@@ -34,9 +90,10 @@ namespace ECommerce_MW.Migrations
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Name")
+                    b.Property<string>("Name")
+                        .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -45,6 +102,65 @@ namespace ECommerce_MW.Migrations
 
                     b.ToTable("Countries");
                 });
+
+            modelBuilder.Entity("ECommerce_MW.DAL.Entities.State", b =>
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("uniqueidentifier");
+
+                b.Property<Guid?>("CountryId")
+                    .HasColumnType("uniqueidentifier");
+
+                b.Property<DateTime?>("CreatedDate")
+                    .HasColumnType("datetime2");
+
+                b.Property<DateTime?>("ModifiedDate")
+                    .HasColumnType("datetime2");
+
+                b.Property<string>("Name")
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnType("nvarchar(50)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("CountryId");
+
+                b.HasIndex("Name", "CountryId")
+                    .IsUnique()
+                    .HasFilter("[CountryId] IS NOT NULL");
+
+                b.ToTable("States");
+            });
+
+            modelBuilder.Entity("ECommerce_MW.DAL.Entities.City", b =>
+            {
+                b.HasOne("ECommerce_MW.DAL.Entities.State", "State")
+                    .WithMany("Cities")
+                    .HasForeignKey("StateId");
+
+                b.Navigation("State");
+            });
+
+            modelBuilder.Entity("ECommerce_MW.DAL.Entities.State", b =>
+            {
+                b.HasOne("ECommerce_MW.DAL.Entities.Country", "Country")
+                    .WithMany("States")
+                    .HasForeignKey("CountryId");
+
+                b.Navigation("Country");
+            });
+
+            modelBuilder.Entity("ECommerce_MW.DAL.Entities.Country", b =>
+            {
+                b.Navigation("States");
+            });
+
+            modelBuilder.Entity("ECommerce_MW.DAL.Entities.State", b =>
+            {
+                b.Navigation("Cities");
+            });     
 #pragma warning restore 612, 618
         }
     }
